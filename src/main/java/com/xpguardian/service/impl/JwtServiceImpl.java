@@ -4,11 +4,12 @@ import com.xpguardian.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import jakarta.xml.bind.DatatypeConverter;
 
 import java.security.Key;
 import java.util.Date;
@@ -19,8 +20,9 @@ import java.util.function.Function;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    @Value("${application.security.jwt.secret-key}")
+    @Value("${application.security.jwt.secret-key:f47ac10b58cc4372a567c5667b51e9d1e8c7c9c0b2f5b3f8f1a1b3a3d5e7f9a2}")
     private String secretKey;
+
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
@@ -84,7 +86,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = DatatypeConverter.parseHexBinary(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
